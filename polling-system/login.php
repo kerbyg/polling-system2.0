@@ -3,6 +3,13 @@ session_start();
 require __DIR__ . '/db.php';
 
 $error = "";
+$success = "";
+
+// Check for a success message from registration
+if (isset($_SESSION['success_message'])) {
+    $success = $_SESSION['success_message'];
+    unset($_SESSION['success_message']); // Clear the message after displaying it
+}
 
 // Handle login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -57,6 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             --shadow-color: rgba(0, 0, 0, 0.08);
             --error-bg: #fee2e2;
             --error-text: #991b1b;
+            --success-bg: #d1fae5;
+            --success-text: #065f46;
         }
         body {
             display: flex;
@@ -125,14 +134,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn:active {
             transform: scale(0.98);
         }
-        .error {
-            margin-top: 1rem;
+        .msg {
+            margin-bottom: 1rem;
             padding: 0.75rem;
             border-radius: 0.5rem;
-            background: var(--error-bg);
-            color: var(--error-text);
             font-size: 0.875rem;
             text-align: left;
+        }
+        .error {
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
+        .success {
+            background: var(--success-bg);
+            color: var(--success-text);
         }
         .footer-text {
             margin-top: 1.5rem;
@@ -162,7 +177,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="logo">🔐</div>
         <h2>Sign in to your account</h2>
         <?php if ($error): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
+            <div class="msg error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="msg success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
         <form method="post">
             <div class="input-group">
