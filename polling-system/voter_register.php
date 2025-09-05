@@ -3,7 +3,6 @@ session_start();
 require __DIR__ . '/db.php';
 
 $error = '';
-$success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -26,7 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("INSERT INTO voters (username, password) VALUES (?, ?)");
             $stmt->execute([$username, $hashed]);
-            $success = "✅ Account created successfully! You can now login.";
+            
+            // Set success message in session and redirect
+            $_SESSION['success_message'] = "✅ Account created successfully! You can now log in.";
+            header("Location: login.php");
+            exit;
         }
     }
 }
@@ -161,9 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($error): ?>
             <p class="msg error"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
-        <?php if ($success): ?>
-            <p class="msg success"><?= htmlspecialchars($success) ?></p>
-        <?php endif; ?>
+        
         <form method="post">
             <div class="input-group">
                 <label for="username">Username</label>
